@@ -33,10 +33,13 @@ class RemoteFeedLoader: FeedLoader {
     }
 }
 
+// <HttpClient> does not need to be a class. it's just a contract defining which external functionality the RemoteFeedLoader needs, so the protocol is a more suitable way for defining it
+/// by creating a clean separation with a protocol, we made RemoteFeedLoader open for extension and more flexible
+/// first phase of httpclient was a singleton, but it's really uneeded to make singleton to pass a url 
 protocol HttpClient {
     func get(from url: URL?)
-    
 }
+
 
 class HttpClientSpy: HttpClient {
     var requestUrl: URL?
@@ -44,10 +47,7 @@ class HttpClientSpy: HttpClient {
     func get(from url: URL?) {
         requestUrl = url
     }
-    
-    
 }
-
 
 class EssentialFeedTests: XCTestCase {
     
@@ -76,6 +76,5 @@ class EssentialFeedTests: XCTestCase {
         
         return (sut, client)
     }
-    
     
 }
