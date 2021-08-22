@@ -27,19 +27,19 @@ class RemoteFeedLoader: FeedLoader {
     }
     
     func load() {
-        client?.requestUrl = URL(string: "www.aaa.com")
+        client?.get(from: URL(string: "www.aaa.com"))
     }
 }
 
 protocol HttpClient {
-    func get(from url: URL)
+    func get(from url: URL?)
     
 }
 
 class HttpClientSpy: HttpClient {
     var requestUrl: URL?
     
-    func get(from url: URL) {
+    func get(from url: URL?) {
         requestUrl = url
     }
     
@@ -51,7 +51,7 @@ class EssentialFeedTests: XCTestCase {
     
     // testing that creation of the object not loading any data
     func test_init_notLoadData() {
-        let client = 
+        let client = HttpClientSpy()
         let _ = RemoteFeedLoader(client: client)
         
         XCTAssertNil(client.requestUrl)
@@ -59,7 +59,7 @@ class EssentialFeedTests: XCTestCase {
     
     func test_load_requestDataFromUrl() {
         //arrang
-        let client = HttpClient.shared
+        let client = HttpClientSpy()
         let sut = RemoteFeedLoader(client: client)
         
         // act
