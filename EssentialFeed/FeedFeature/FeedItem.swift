@@ -7,6 +7,9 @@
 
 import Foundation
 
-class FeedItem {
-    
+struct FeedItem {
+    let id: Int
+    let image: URL
+    let location: String?
+    let description: String?
 }
