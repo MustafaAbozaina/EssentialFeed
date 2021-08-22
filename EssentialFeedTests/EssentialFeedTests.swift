@@ -6,19 +6,19 @@
 //
 
 import XCTest
+import EssentialFeed
 
 class EssentialFeedTests: XCTestCase {
     
     // testing that creation of the object not loading any data
     func test_init_notLoadData() {
-        let client = makeSUT().client
+        let (_ , client) = makeSUT()
         
         XCTAssertNil(client.requestUrl)
     }
     
     func test_load_requestDataFromUrl() {
-        let sut = makeSUT().sut
-        let client = makeSUT().client
+        let (sut, client) = makeSUT(url: URL(string: "www.aaa.com"))
         
         // act
         sut.load()
@@ -27,8 +27,7 @@ class EssentialFeedTests: XCTestCase {
         XCTAssertNotNil(client.requestUrl)
     }
     
-    private func makeSUT(url: URL? = URL(string: "www.aaa.com")) -> (sut: RemoteFeedLoader, client: HttpClientSpy) {
-        
+    private func makeSUT(url: URL? = URL(string:"www.aaa.com" )) -> (sut: RemoteFeedLoader, client: HttpClientSpy) {        
         // arrang
         let client = HttpClientSpy()
         let sut = RemoteFeedLoader(url: url, client: client)
@@ -36,4 +35,13 @@ class EssentialFeedTests: XCTestCase {
         return (sut, client)
     }
     
+    //MARK:- HELPERS
+
+    class HttpClientSpy: HttpClient {
+        var requestUrl: URL?
+        
+        func get(from url: URL?) {
+            requestUrl = url
+        }
+    }
 }
