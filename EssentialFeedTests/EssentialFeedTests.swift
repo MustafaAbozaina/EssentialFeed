@@ -9,39 +9,32 @@ import XCTest
 import EssentialFeed
 
 class EssentialFeedTests: XCTestCase {
+    let testUrl = URL(string: "www.aaa.com")
     
     // testing that creation of the object not loading any data
     func test_init_notLoadData() {
-        let url = URL(string: "www.aaa.com")
-        let (_, client) = makeSUT(url: url)
+        let (_, client) = makeSUT(url: testUrl)
         
         XCTAssertNil(client.requestsUrls.first)
     }
     
     func test_load_requestDataFromUrl() {
-        let url = URL(string: "www.aaa.com")
-        let (sut, client) = makeSUT(url: url)
-        
+        let (sut, client) = makeSUT(url: testUrl)
         // act
         sut.load()
-        
         //Assert
         XCTAssertNotNil(client.requestsUrls.first)
     }
     
     func test_loadTwice_requestDataFromUrl() {
-        let url = URL(string: "www.aaa.com")
-        let (sut, client) = makeSUT(url: url)
-        
+        let (sut, client) = makeSUT(url: testUrl)
         sut.load()
         sut.load()
-        
-        XCTAssertEqual(client.requestsUrls, [url, url])
+        XCTAssertEqual(client.requestsUrls, [testUrl, testUrl])
     }
     
     func test_load_deliversError() {
-        let url = URL(string: "www.aaa.com")
-        let (sut, client) = makeSUT(url: url)
+        let (sut, client) = makeSUT(url: testUrl)
         
         var capturedErrors =  [RemoteFeedLoader.Error]()
         // 1- load method should use (get method) from httpClient, which append a completion in the completions completions array
@@ -60,9 +53,8 @@ class EssentialFeedTests: XCTestCase {
     }
     
     func test_load_devliversErrorOnNon200HttpResponse() {
-        let url = URL(string: "www.aaa.com")
         // arrang
-        let (sut, client) = makeSUT(url: url)
+        let (sut, client) = makeSUT(url: testUrl)
         var capturedErrors =  [RemoteFeedLoader.Error]()
         sut.load() { error in
                 capturedErrors.append(error)
@@ -72,7 +64,6 @@ class EssentialFeedTests: XCTestCase {
         
         XCTAssertEqual(capturedErrors, [.invalidData])
     }
-    
 
     //MARK:- HELPERS
     
