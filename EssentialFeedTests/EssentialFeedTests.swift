@@ -26,6 +26,16 @@ class EssentialFeedTests: XCTestCase {
         //Assert
         XCTAssertNotNil(client.requestUrl)
     }
+    
+    func test_loadTwice_requestDataFromUrl() {
+        let (sut, client) = makeSUT(url: URL(string: "www.aaa.com"))
+        
+        sut.load()
+        sut.load()
+        
+        XCTAssertEqual(client.apiCallsCount, 2)
+    }
+    
 
     //MARK:- HELPERS
     
@@ -39,9 +49,11 @@ class EssentialFeedTests: XCTestCase {
     
     class HttpClientSpy: HttpClient {
         var requestUrl: URL?
+        var apiCallsCount: Int = 0
         
         func get(from url: URL?) {
             requestUrl = url
+            apiCallsCount += 1
         }
     }
 }
