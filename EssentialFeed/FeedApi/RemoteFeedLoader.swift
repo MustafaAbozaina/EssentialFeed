@@ -23,6 +23,7 @@ public class RemoteFeedLoader: FeedLoader {
     public func load() {
         client?.get(from: url)
     }
+
 }
 
 // <HttpClient> does not need to be a class. it's just a contract defining which external functionality the RemoteFeedLoader needs, so the protocol is a more suitable way for defining it
@@ -30,7 +31,7 @@ public class RemoteFeedLoader: FeedLoader {
 /// first phase of httpclient was a singleton, but it's really uneeded to make singleton to pass a url
 public protocol HttpClient {
     func get(from url: URL?)
-    var apiCallsCount: Int {get set}
+    var requestsUrls: [URL] {get set}
 }
 
 

@@ -12,28 +12,40 @@ class EssentialFeedTests: XCTestCase {
     
     // testing that creation of the object not loading any data
     func test_init_notLoadData() {
-        let (_, client) = makeSUT()
+        let url = URL(string: "www.aaa.com")
+        let (_, client) = makeSUT(url: url)
         
-        XCTAssertNil(client.requestUrl)
+        XCTAssertNil(client.requestsUrls.first)
     }
     
     func test_load_requestDataFromUrl() {
-        let (sut, client) = makeSUT(url: URL(string: "www.aaa.com"))
+        let url = URL(string: "www.aaa.com")
+        let (sut, client) = makeSUT(url: url)
         
         // act
         sut.load()
         
         //Assert
-        XCTAssertNotNil(client.requestUrl)
+        XCTAssertNotNil(client.requestsUrls.first)
     }
     
     func test_loadTwice_requestDataFromUrl() {
-        let (sut, client) = makeSUT(url: URL(string: "www.aaa.com"))
+        let url = URL(string: "www.aaa.com")
+        let (sut, client) = makeSUT(url: url)
         
         sut.load()
         sut.load()
         
-        XCTAssertEqual(client.apiCallsCount, 2)
+        XCTAssertEqual(client.requestsUrls, [url, url])
+    }
+    
+    func test_load_deliversError() {
+        let url = URL(string: "www.aaa.com")
+        let (sut, client) = makeSUT(url: url)
+        
+        var capturedErros: RemoteFeedLoader.Error?
+        sut.load() {error in capturedErros = error}
+        
     }
     
 
@@ -48,12 +60,13 @@ class EssentialFeedTests: XCTestCase {
     }
     
     class HttpClientSpy: HttpClient {
-        var requestUrl: URL?
-        var apiCallsCount: Int = 0
+
+        var requestsUrls = [URL]()
         
         func get(from url: URL?) {
-            requestUrl = url
-            apiCallsCount += 1
+            if let unwrappedUrl = url {
+            requestsUrls.append(unwrappedUrl)
+            }
         }
     }
 }
