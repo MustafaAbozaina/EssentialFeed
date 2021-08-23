@@ -43,10 +43,20 @@ class EssentialFeedTests: XCTestCase {
         let url = URL(string: "www.aaa.com")
         let (sut, client) = makeSUT(url: url)
         
-        var capturedErro: RemoteFeedLoader.Error?
-        sut.load() {error in capturedErro = error}
+        var capturedErrors =  [RemoteFeedLoader.Error]()
+        // 1- load method should use (get method) from httpClient, which append a completion in the completions completions array
+        sut.load() {
+            // 2- in client class (get method) passed a completion to the array so this completion is saved in completions array and its index is 0
+//            error in capturedErrors.append(error)
+            capturedErrors.append($0)
+        }
         
-        XCTAssertEqual(capturedErro, .connectivity)
+        // to check that
+        let clientError = NSError(domain: "test", code: 12)
+        // in client completions array the error saved so to fire the completion which have the code of capturedErros.append($0) we should call the next line
+        client.completions[0](clientError)
+        
+        XCTAssertEqual(capturedErrors, [.connectivity])
         
     }
     
@@ -62,16 +72,14 @@ class EssentialFeedTests: XCTestCase {
     }
     
     class HttpClientSpy: HttpClient {
-        var error: Error?
         var requestsUrls = [URL]()
+        var completions = [(Error) -> Void]()
         
         func get(from url: URL?, completion: @escaping (Error) -> Void) {
             if let unwrappedUrl = url {
                 requestsUrls.append(unwrappedUrl)
             }
-            if let error = error {
-                completion(error)
-            }
+            completions.append(completion)
         }
     }
 }
