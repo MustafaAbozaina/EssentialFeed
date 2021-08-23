@@ -29,6 +29,7 @@ public class RemoteFeedLoader: FeedLoader {
     // we are using Swift.Error not just (Error), to tell the compiler don't complain because the Error type we are creating differ from Error in Swift so if you wrote Error: Error -->  the compiler will trigger an error so that we used Swift.Error to let it know that
     public enum Error: Swift.Error {
         case connectivity
+        case invalid
     }
 }
 

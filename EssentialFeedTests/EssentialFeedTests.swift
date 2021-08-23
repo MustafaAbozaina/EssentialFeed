@@ -57,7 +57,20 @@ class EssentialFeedTests: XCTestCase {
         client.complete(with: clientError)
         
         XCTAssertEqual(capturedErrors, [.connectivity])
+    }
+    
+    func test_load_devliversErrorOnNon200HttpResponse() {
+        let url = URL(string: "www.aaa.com")
+        // arrang
+        let (sut, client) = makeSUT(url: url)
+        var capturedErrors =  [RemoteFeedLoader.Error]()
+        sut.load() {
+            capturedErrors.append($0)
+        }
+        // act
+        client.complete(withStatusCode: 400)
         
+        XCTAssertEqual(capturedErrors, [.invalid])
     }
     
 
@@ -86,6 +99,10 @@ class EssentialFeedTests: XCTestCase {
         
         func complete(with error: Error, at index:Int = 0) {
             messages[index].completion(error)
+        }
+        
+        func complete(withStatusCode: Int) {
+            
         }
     }
 }
