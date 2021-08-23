@@ -7,7 +7,18 @@
 
 import Foundation
 
+public enum HttpClientResult {
+    case success(HTTPURLResponse)
+    case failure(Error)
+}
 
+// <HttpClient> does not need to be a class. it's just a contract defining which external functionality the RemoteFeedLoader needs, so the protocol is a more suitable way for defining it
+/// by creating a clean separation with a protocol, we made RemoteFeedLoader open for extension and more flexible
+/// first phase of httpclient was a singleton, but it's really uneeded to make singleton to pass a url
+public protocol HttpClient {
+    func get(from url: URL?, completion: @escaping (HttpClientResult) -> Void)
+    var requestsUrls: [URL] {get}
+}
 
 public class RemoteFeedLoader {
     var client: HttpClient?
@@ -20,10 +31,11 @@ public class RemoteFeedLoader {
     
     // here's Error type, the compiler will understand that The very near class to it which is Error extends Swift.Error
     public func load(completion:@escaping (Error) -> Void = {_  in }) {
-        client?.get(from: url) { error, response in
-            if let _ = response {
+        client?.get(from: url) { result in
+            switch(result) {
+            case .success:
                 completion(.invalidData)
-            } else if let _ = error {
+            case .failure:
                 completion(.connectivity)
             }
         }
@@ -34,14 +46,5 @@ public class RemoteFeedLoader {
         case invalidData
     }
 }
-
-// <HttpClient> does not need to be a class. it's just a contract defining which external functionality the RemoteFeedLoader needs, so the protocol is a more suitable way for defining it
-/// by creating a clean separation with a protocol, we made RemoteFeedLoader open for extension and more flexible
-/// first phase of httpclient was a singleton, but it's really uneeded to make singleton to pass a url
-public protocol HttpClient {
-    func get(from url: URL?, completion: @escaping (Error?, HTTPURLResponse?) -> Void)
-    var requestsUrls: [URL] {get}
-}
-
 
 
