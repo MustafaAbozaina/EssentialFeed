@@ -7,11 +7,9 @@
 
 import Foundation
 
-protocol FeedLoader {
-    
-}
 
-public class RemoteFeedLoader: FeedLoader {
+
+public class RemoteFeedLoader {
     var client: HttpClient?
     var url: URL?
     
