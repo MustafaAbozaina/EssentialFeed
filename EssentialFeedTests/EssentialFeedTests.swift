@@ -54,7 +54,7 @@ class EssentialFeedTests: XCTestCase {
         // to check that
         let clientError = NSError(domain: "test", code: 12)
         // in client completions array the error saved so to fire the completion which have the code of capturedErros.append($0) we should call the next line
-        client.completions[0](clientError)
+        client.complete(with: clientError)
         
         XCTAssertEqual(capturedErrors, [.connectivity])
         
@@ -80,6 +80,10 @@ class EssentialFeedTests: XCTestCase {
                 requestsUrls.append(unwrappedUrl)
             }
             completions.append(completion)
+        }
+        
+        func complete(with error: Error, at index:Int = 0) {
+            completions[index](error)
         }
     }
 }
