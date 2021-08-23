@@ -37,7 +37,7 @@ public class RemoteFeedLoader: FeedLoader {
 /// first phase of httpclient was a singleton, but it's really uneeded to make singleton to pass a url
 public protocol HttpClient {
     func get(from url: URL?, completion: @escaping (Error) -> Void)
-    var requestsUrls: [URL] {get set}
+    var requestsUrls: [URL] {get}
 }
 
 

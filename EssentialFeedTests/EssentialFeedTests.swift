@@ -72,18 +72,20 @@ class EssentialFeedTests: XCTestCase {
     }
     
     class HttpClientSpy: HttpClient {
-        var requestsUrls = [URL]()
-        var completions = [(Error) -> Void]()
+        private var messages = [(url: URL, completion: (Error) -> Void)]()
         
+        var requestsUrls: [URL] {
+            return messages.map {$0.url}
+        }
+                
         func get(from url: URL?, completion: @escaping (Error) -> Void) {
-            if let unwrappedUrl = url {
-                requestsUrls.append(unwrappedUrl)
+            if let url = url {
+                messages.append((url,completion))
             }
-            completions.append(completion)
         }
         
         func complete(with error: Error, at index:Int = 0) {
-            completions[index](error)
+            messages[index].completion(error)
         }
     }
 }
