@@ -110,7 +110,6 @@ class EssentialFeedTests: XCTestCase {
         
         func complete(withStatusCode code: Int, at index: Int = 0) {
             if code != 200 {
-                
                 let response = HTTPURLResponse(url: requestsUrls[index], statusCode: code, httpVersion: nil, headerFields: nil)
                 if let response = response {
                     messages[index].completion(.success(response))
