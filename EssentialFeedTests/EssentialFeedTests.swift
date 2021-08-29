@@ -68,6 +68,19 @@ class EssentialFeedTests: XCTestCase {
         }
     }
     
+    func test_load_deliversErrorOn200HttpResponseBecauseInvalidJson() {
+        let (sut, client) = makeSUT(url: testUrl)
+        
+        var capturedErros = [RemoteFeedLoader.Error]()
+        sut.load() { error in
+            capturedErros.append(error)
+        }
+        let invalidJSON = Data(bytes: "invliad json".utf8)
+//        client.complete(withStatusCode: 200, data: invalidJSON)
+        
+        
+    }
+    
     //MARK:- HELPERS
     
     private func makeSUT(url: URL? = URL(string:"www.aaa.com" )) -> (sut: RemoteFeedLoader, client: HttpClientSpy) {
